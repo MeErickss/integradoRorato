@@ -28,7 +28,7 @@ if ($rorato_local) {
     define('DB_PORT', '3306');
     define('DB_NAME', 'ezyro_42231415_rorato_db');
     define('DB_USER', 'ezyro_42231415');
-    define('DB_PASS', '');   // senha do banco: preencher no host
+    define('DB_PASS', '990ccb28eeb');   // senha do banco: preencher no host
 }
 
 const DB_CHARSET = 'utf8mb4';
