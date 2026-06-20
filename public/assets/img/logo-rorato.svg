@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="40 36 820 210" role="img" aria-labelledby="title desc">
+  <title id="title">Construções Rorato</title>
+  <desc id="desc">Logo azul e grafite da Construções Rorato com o slogan Tecnologia na sua obra.</desc>
+
+  <g transform="translate(55 42)">
+    <circle cx="90" cy="88" r="70" fill="#0f5fc3"/>
+    <circle cx="90" cy="88" r="56" fill="#fff"/>
+    <path d="M50 37h126c18 0 32 14 32 32v78h-52l-36-34H88c-19 0-35-15-35-34V37z" fill="#1684dc"/>
+    <path d="M69 38h95c14 0 25 11 25 25v16c0 9-7 16-16 16H88c-12 0-22 10-22 22 0 19 15 35 34 35h94l28 27H92c-50 0-90-40-90-90 0-23 9-44 24-60l43 39z" fill="#075bb8"/>
+    <path d="M28 31c-16 16-26 38-26 62 0 48 39 87 87 87 20 0 39-7 54-18H96c-37 0-67-30-67-67 0-12 3-23 8-33z" fill="#0a3d92" opacity=".85"/>
+  </g>
+  <g transform="translate(280 58)" fill="#232a36">
+    <text x="0" y="24" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" letter-spacing="1">CONSTRUÇÕES</text>
+    <text x="0" y="102" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="78" font-weight="900">RORATO</text>
+    <rect x="-42" y="125" width="498" height="16" fill="#1684dc"/>
+    <text x="-42" y="172" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="700" letter-spacing="10">TECNOLOGIA NA SUA OBRA</text>
+  </g>
+</svg>
+

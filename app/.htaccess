@@ -1,0 +1,3 @@
+# Pasta de código interno: nenhum acesso direto via navegador.
+Options -Indexes
+Require all denied

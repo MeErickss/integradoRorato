@@ -1,0 +1,24 @@
+# Sistema operacional
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Editores / IDEs
+.vscode/
+.idea/
+*.code-workspace
+
+# Logs e temporários
+*.log
+*.tmp
+*.bak
+~$*
+
+# Dependências (caso venham a existir)
+/vendor/
+/node_modules/
+
+# Não versionar (a pedido)
+/.claude/
+/docs/

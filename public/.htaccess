@@ -1,0 +1,4 @@
+# Proíbe a listagem de diretórios na pasta pública.
+Options -Indexes
+
+DirectoryIndex index.php

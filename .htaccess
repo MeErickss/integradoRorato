@@ -1,0 +1,14 @@
+# ============================================================
+#  Construções Rorato — configuração Apache (raiz do projeto)
+# ============================================================
+
+# Proíbe a listagem de diretórios (requisito de Redes/SO).
+Options -Indexes
+
+# Bloqueia acesso a arquivos ocultos (.htaccess, .git, etc.)
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# Página inicial padrão
+DirectoryIndex index.php
