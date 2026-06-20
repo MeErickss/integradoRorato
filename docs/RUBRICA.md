@@ -1,8 +1,8 @@
 # Rubrica para Avaliação de Trabalhos
 
-**Nome Completo:** Julia Stela
-**Link do GitHub:** https://github.com/jstelinha/site-vitrine
-**Link do Site:** não coloquei no ar
+**Nome Completo:** Erick Alair Marçal Da Cruz
+**Link do GitHub:** https://github.com/MeErickss/integradoRorato
+**Link do Site:** https://tintasrorato.unaux.com/public/index.php
 
 ---
 

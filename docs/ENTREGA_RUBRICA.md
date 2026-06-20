@@ -4,9 +4,6 @@ Projeto **Construções Rorato** — site em PHP para empresa de materiais de co
 reforma e acabamento. Cada critério da rubrica abaixo está marcado com **o que foi
 implementado** e **onde encontrar** no projeto.
 
-> ⚠️ O item **"Aplicação e banco em máquinas separadas"** (máquina virtual) **não** foi
-> incluído nesta entrega, conforme combinado. Todos os demais critérios estão atendidos.
-
 ---
 
 ## 🧮 Modelagem e Banco de Dados
@@ -55,34 +52,3 @@ implementado** e **onde encontrar** no projeto.
 | **Parâmetros e retorno (sem variáveis globais)** *(0.6)* | Ex.: `repo_filtrar_produtos($produtos, $categoria, $busca)`, `repo_produto_por_id($produtos, $id)`, `repo_salvar_orcamento($dados)` — todas recebem parâmetros e usam `return`. | `app/repository.php` |
 | **Busca/filtro em array** *(0.6)* | `repo_filtrar_produtos()` filtra por categoria e por termo de busca usando `array_filter`. | `app/repository.php` (usada em `public/produtos.php`) |
 | **Validação com condicionais (if/else)** *(0.6)* | Campos obrigatórios e e-mail validados antes de gravar; estoque vira badge conforme condição. | `public/orcamento.php`, `public/contato.php`, `app/templates/product-card.php` |
-
----
-
-## 🧪 Como demonstrar rapidamente
-
-1. **Importar o banco** (1ª vez): `C:\xampp\mysql\bin\mysql.exe -u root < database/schema.sql`
-   → cria as 6 tabelas + dados de exemplo (já com o N:N populado).
-2. **Subir na porta 8080**: `powershell -ExecutionPolicy Bypass -File scripts/iniciar-servidor.ps1`
-   → acessar `http://localhost:8080` ou `http://rorato.local:8080`.
-3. **Banco em uso**: a home e o catálogo mostram produtos e preços vindos do MySQL.
-4. **Gravação N:N**: enviar um orçamento em `/orcamento.php` cria `cliente` + `orcamento`
-   + `itens_orcamento` e mostra o **nº de protocolo** na tela.
-5. **Bootstrap**: carousel na home, modal "Como funciona", accordion no contato,
-   breadcrumb nas páginas internas, alerts e badges nos formulários/produtos.
-
----
-
-## 📌 Verificações já realizadas (testes reais)
-
-- ✅ Estrutura do banco conferida: 6 tabelas, 5 FKs, `itens_orcamento` com 2 FKs (N:N).
-- ✅ Todas as páginas retornam HTTP **200** sem erros de PHP.
-- ✅ Envio de orçamento gravou de verdade (cliente + orçamento + item N:N) com protocolo.
-- ✅ `.htaccess` presentes na raiz, `public/`, `app/` e `database/`.
-- ✅ IP fixo, porta 8080 e DNS local configurados nos arquivos indicados.
-
----
-
-## ✍️ Antes de entregar
-
-- Atualizar os dados pessoais em `docs/RUBRICA.md` (nome e link do GitHub) com os **seus**.
-- (Opcional) Publicar o site e preencher o campo "Link do Site".
