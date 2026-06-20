@@ -4,14 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
 
-/**
- * Retorna uma conexão PDO única (singleton) com o banco MySQL.
- *
- * Em caso de falha na conexão, devolve null — assim as páginas
- * conseguem cair para o catálogo em array (fallback) sem quebrar.
- *
- * @return PDO|null
- */
+/* ── Conexão PDO (singleton, com fallback) ───────── */
 function db(): ?PDO
 {
     static $pdo = null;
@@ -38,7 +31,6 @@ function db(): ?PDO
             PDO::ATTR_EMULATE_PREPARES   => false,
         ]);
     } catch (PDOException $e) {
-        // Não exibe credenciais nem detalhes sensíveis ao usuário.
         error_log('Falha ao conectar no banco: ' . $e->getMessage());
         $pdo = null;
     }
@@ -46,9 +38,6 @@ function db(): ?PDO
     return $pdo;
 }
 
-/**
- * Indica se há conexão ativa com o banco de dados.
- */
 function db_online(): bool
 {
     return db() instanceof PDO;

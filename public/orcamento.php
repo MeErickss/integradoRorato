@@ -25,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $quantidade = trim((string) ($_POST['quantidade'] ?? ''));
     $mensagem   = trim((string) ($_POST['mensagem'] ?? ''));
 
-    // ===== Validação com condicionais (Tech Forge) =====
     if ($nome === '')       { $erros[] = 'Informe o seu nome.'; }
     if ($telefone === '')   { $erros[] = 'Informe um telefone ou WhatsApp.'; }
     if ($quantidade === '') { $erros[] = 'Informe a quantidade desejada.'; }

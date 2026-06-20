@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+/* ── App ─────────────────────────────────────────── */
 const APP_NAME = 'Construções Rorato';
 const APP_TAGLINE = 'Tecnologia na sua obra';
 const APP_DOMAIN = 'rorato.local';
@@ -10,27 +11,33 @@ const APP_WHATSAPP = '5554999992026';
 const APP_EMAIL = 'atendimento@rorato.local';
 const APP_ADDRESS = 'Rua das Obras, 120 - Centro';
 
-/*
- * Configuração do banco de dados.
- *
- * DB_HOST usa um IP FIXO (em vez de "localhost") para atender ao
- * requisito de rede do projeto. Em ambiente com o banco em outra
- * máquina, basta trocar este IP pelo IP fixo do servidor MySQL.
- */
-const DB_HOST = '127.0.0.1';   // IP fixo do servidor de banco
-const DB_PORT = '3306';
-const DB_NAME = 'rorato_db';
-const DB_USER = 'root';
-const DB_PASS = '';
+/* ── Banco de dados (detecta local x hospedagem) ─── */
+$rorato_local =
+    PHP_SAPI === 'cli-server' ||
+    in_array($_SERVER['SERVER_NAME'] ?? '', ['localhost', '127.0.0.1', 'rorato.local'], true) ||
+    in_array($_SERVER['SERVER_ADDR'] ?? '', ['127.0.0.1', '::1'], true);
+
+if ($rorato_local) {
+    define('DB_HOST', '127.0.0.1');   // IP fixo
+    define('DB_PORT', '3306');
+    define('DB_NAME', 'rorato_db');
+    define('DB_USER', 'root');
+    define('DB_PASS', '');
+} else {
+    define('DB_HOST', 'sql204.ezyro.com');
+    define('DB_PORT', '3306');
+    define('DB_NAME', 'ezyro_42231415_rorato_db');
+    define('DB_USER', 'ezyro_42231415');
+    define('DB_PASS', '');   // senha do banco: preencher no host
+}
+
 const DB_CHARSET = 'utf8mb4';
 
-/*
- * Acesso ao painel administrativo (/admin.php).
- * Troque o usuário e a senha abaixo antes de usar de verdade.
- */
+/* ── Admin ───────────────────────────────────────── */
 const ADMIN_USER = 'admin';
 const ADMIN_PASSWORD = 'rorato2026';
 
+/* ── Helpers ─────────────────────────────────────── */
 function e($value): string
 {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
@@ -56,10 +63,6 @@ function whatsapp_link(string $message): string
     return 'https://wa.me/' . APP_WHATSAPP . '?text=' . rawurlencode($message);
 }
 
-/**
- * Converte o token de ícone da categoria (armazenado no banco/array)
- * em uma classe de Bootstrap Icons.
- */
 function icone_categoria(string $token): string
 {
     $mapa = [

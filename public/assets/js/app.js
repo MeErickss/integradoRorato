@@ -2,6 +2,16 @@
    Construções Rorato — interações
 ════════════════════════════════════════════════ */
 
+/* ── Versão (trocar a cada deploy) ───────────────── */
+const RORATO_VERSION = 'v1.0.0';
+const RORATO_BUILD   = '2026-06-20';
+console.log(
+    '%c🏗️ Construções Rorato %c' + RORATO_VERSION + ' %c· atualizado em ' + RORATO_BUILD,
+    'color:#1f6feb;font-weight:bold;font-size:13px',
+    'color:#ff7a18;font-weight:bold',
+    'color:#64748b'
+);
+
 /* ── Header: sombra ao rolar ─────────────────────── */
 const nav = document.getElementById('siteNav');
 if (nav) {
@@ -58,7 +68,6 @@ document.querySelectorAll('select[name="categoria"]').forEach((select) => {
 /* ── Busca automática (debounce) — mantém o botão ── */
 const searchInput = document.getElementById('q');
 if (searchInput) {
-    // Mantém o foco e o cursor no fim após o reload do filtro.
     if (searchInput.value) {
         const v = searchInput.value;
         searchInput.focus();
@@ -128,7 +137,6 @@ if (modalProduto) {
     const check = (id, on) => { const el = document.getElementById(id); if (el) el.checked = !!on; };
     const syncSelects = () => form.querySelectorAll('select').forEach((s) => s.classList.toggle('has-value', s.value !== ''));
 
-    // Botão "Novo produto": limpa o formulário.
     const btnNovo = document.getElementById('btnNovoProduto');
     if (btnNovo) {
         btnNovo.addEventListener('click', () => {
@@ -142,7 +150,6 @@ if (modalProduto) {
         });
     }
 
-    // Botões "Editar": preenchem o formulário com os dados da linha.
     document.querySelectorAll('.btn-edit').forEach((btn) => {
         btn.addEventListener('click', () => {
             const d = btn.dataset;

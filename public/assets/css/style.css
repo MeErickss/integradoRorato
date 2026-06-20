@@ -1,15 +1,14 @@
 /* ════════════════════════════════════════════════════════════
    CONSTRUÇÕES RORATO — Design System
-   Carregado DEPOIS do Bootstrap, para sobrescrever o tema.
 ═══════════════════════════════════════════════════════════════ */
 
 :root {
     /* Cores */
-    --ink:        #0a0f1f;   /* superfícies escuras de marca (hero, footer) */
+    --ink:        #0a0f1f;
     --ink-2:      #141b2e;
     --slate:      #334155;
-    --text:       #334155;   /* texto do corpo (tema-aware) */
-    --heading:    #0a0f1f;   /* títulos (tema-aware) */
+    --text:       #334155;
+    --heading:    #0a0f1f;
     --nav-bg:     rgba(255,255,255,.82);
     --muted:      #5b6678;
     --muted-2:    #94a1b4;
@@ -764,7 +763,7 @@ input:focus, select:focus, textarea:focus {
 }
 textarea { resize: vertical; }
 
-/* Seta customizada do select (consistente e com respiro da borda) */
+/* Seta customizada do select */
 select {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -1091,8 +1090,7 @@ select::-ms-expand { display: none; }
 [data-theme="dark"] .page-head,
 [data-theme="dark"] .section--soft { background: var(--surface-2); }
 
-/* Carrossel no escuro: bolinhas claras, sem halo de sombra e setas visíveis.
-   Usa !important e filter:none para vencer o tema escuro do próprio Bootstrap. */
+/* ── Carrossel no escuro ─────────────────────────── */
 [data-theme="dark"] .carousel-indicators [data-bs-target] {
     background-color: rgba(255,255,255,.55) !important;
     opacity: 1 !important;

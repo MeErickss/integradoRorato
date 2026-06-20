@@ -7,11 +7,9 @@ $showQuoteLink = $showQuoteLink ?? false;
 $categoria = $categorias[$produto['categoria']] ?? ['nome' => 'Produto', 'icone' => 'toolbox'];
 $headingTag = $headingLevel === 3 ? 'h3' : 'h2';
 
-// Badge de estoque conforme condição (validação condicional).
 $estoque = (string) ($produto['estoque'] ?? '');
 $estoqueClasse = stripos($estoque, 'pronta') !== false ? 'b-ok' : 'b-wait';
 
-// Preço pode vir como número (banco) ou string (fallback).
 $precoTexto = is_numeric($produto['preco'] ?? null)
     ? formatar_preco((float) $produto['preco'])
     : (string) ($produto['preco'] ?? 'Sob consulta');

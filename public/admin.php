@@ -7,19 +7,17 @@ session_start();
 require_once __DIR__ . '/../app/config.php';
 require_once __DIR__ . '/../app/repository.php';
 
-// Protege a página: sem sessão, vai para o login.
 if (empty($_SESSION['admin'])) {
     header('Location: admin-login.php');
     exit;
 }
 
-// Token CSRF (protege as ações de gravação).
 if (empty($_SESSION['csrf'])) {
     $_SESSION['csrf'] = bin2hex(random_bytes(16));
 }
 $csrf = $_SESSION['csrf'];
 
-/* ===== Ações do CRUD de produtos (POST) ===== */
+/* ── Ações do CRUD de produtos (POST) ────────────── */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $acao = (string) ($_POST['acao'] ?? '');
 
@@ -44,7 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $destaque  = isset($_POST['destaque']) ? 1 : 0;
         $ativo     = isset($_POST['ativo']) ? 1 : 0;
 
-        // Normaliza o preço: aceita "38,90" ou "38.90"; vazio = sob consulta (null).
         $preco = null;
         if ($precoRaw !== '') {
             $tmp = preg_replace('/[^0-9.,]/', '', $precoRaw);
@@ -52,7 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $preco = $tmp !== '' ? (float) $tmp : null;
         }
 
-        // Validação com condicionais.
         if ($nome === '' || $idCat <= 0 || $unidade === '') {
             $_SESSION['flash'] = ['tipo' => 'danger', 'msg' => 'Preencha pelo menos nome, categoria e unidade.'];
         } else {
@@ -85,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-/* ===== Dados (GET) ===== */
+/* ── Dados (GET) ──────────────────────────────────── */
 $orcamentos     = repo_listar_orcamentos();
 $mensagens      = repo_listar_mensagens();
 $produtosAdmin  = repo_listar_produtos_admin();

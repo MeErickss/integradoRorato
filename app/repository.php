@@ -4,32 +4,12 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/database.php';
 
-/*
- * ============================================================
- *  Camada de repositório
- *  - Lê dados do banco (PDO) e os entrega como ARRAYS.
- *  - Caso o banco esteja offline, cai para o catálogo em
- *    array (app/data/catalogo.php) — fallback resiliente.
- *  - Todas as funções recebem parâmetros e usam return
- *    (sem variáveis globais), atendendo ao Tech Forge.
- * ============================================================
- */
-
-/**
- * Carrega o catálogo em array (fonte de fallback / seed).
- *
- * @return array{categorias: array, produtos: array}
- */
+/* ── Leitura do catálogo ─────────────────────────── */
 function catalogo_array(): array
 {
     return require __DIR__ . '/data/catalogo.php';
 }
 
-/**
- * Retorna as categorias indexadas por slug.
- *
- * @return array<string, array{nome:string, descricao:string, icone:string}>
- */
 function repo_categorias(): array
 {
     $pdo = db();
@@ -54,11 +34,6 @@ function repo_categorias(): array
     return $categorias;
 }
 
-/**
- * Retorna a lista de produtos ativos no formato usado pelos templates.
- *
- * @return array<int, array<string, mixed>>
- */
 function repo_produtos(): array
 {
     $pdo = db();
@@ -76,7 +51,6 @@ function repo_produtos(): array
 
     $linhas = $pdo->query($sql)->fetchAll();
 
-    // Mapeia para o mesmo formato do catálogo em array.
     return array_map(static function (array $l): array {
         return [
             'id'        => (int) $l['id_produto'],
@@ -91,13 +65,6 @@ function repo_produtos(): array
     }, $linhas);
 }
 
-/**
- * Filtra produtos por categoria (slug) e por um termo de busca.
- * Demonstra busca/filtro em array + validação com condicionais.
- *
- * @param array<int, array<string, mixed>> $produtos
- * @return array<int, array<string, mixed>>
- */
 function repo_filtrar_produtos(array $produtos, string $categoria = 'todos', string $busca = ''): array
 {
     $termo = strtolower(trim($busca));
@@ -120,12 +87,6 @@ function repo_filtrar_produtos(array $produtos, string $categoria = 'todos', str
     return array_values($filtrados);
 }
 
-/**
- * Busca um produto pelo id dentro de uma lista (array) de produtos.
- *
- * @param array<int, array<string, mixed>> $produtos
- * @return array<string, mixed>|null
- */
 function repo_produto_por_id(array $produtos, int $id): ?array
 {
     foreach ($produtos as $produto) {
@@ -137,9 +98,7 @@ function repo_produto_por_id(array $produtos, int $id): ?array
     return null;
 }
 
-/**
- * Formata um preço (float) como moeda brasileira, ou rótulo padrão.
- */
+/* ── Formatação ──────────────────────────────────── */
 function formatar_preco(?float $preco): string
 {
     if ($preco === null || $preco <= 0) {
@@ -149,13 +108,17 @@ function formatar_preco(?float $preco): string
     return 'R$ ' . number_format($preco, 2, ',', '.');
 }
 
-/**
- * Salva um orçamento completo: cliente + orçamento + itens (N:N).
- * Usa transação para manter a integridade entre as tabelas.
- *
- * @param array{nome:string, telefone:string, email:string, id_produto:int, quantidade:string, unidade:string, observacoes:string} $dados
- * @return array{ok:bool, id:int|null, erro:string|null}
- */
+function formatar_data(?string $datetime): string
+{
+    if ($datetime === null || $datetime === '') {
+        return '—';
+    }
+
+    $ts = strtotime($datetime);
+    return $ts !== false ? date('d/m/Y H:i', $ts) : $datetime;
+}
+
+/* ── Gravação (orçamento N:N e contato) ──────────── */
 function repo_salvar_orcamento(array $dados): array
 {
     $pdo = db();
@@ -186,7 +149,6 @@ function repo_salvar_orcamento(array $dados): array
         ]);
         $idOrcamento = (int) $pdo->lastInsertId();
 
-        // Só grava o item (N:N) se um produto válido foi escolhido.
         if ($dados['id_produto'] > 0) {
             $stmtItem = $pdo->prepare(
                 'INSERT INTO itens_orcamento (id_orcamento, id_produto, quantidade, unidade)
@@ -212,25 +174,33 @@ function repo_salvar_orcamento(array $dados): array
     }
 }
 
-/**
- * Formata uma data/hora do banco (Y-m-d H:i:s) para o padrão brasileiro.
- */
-function formatar_data(?string $datetime): string
+function repo_salvar_mensagem(array $dados): bool
 {
-    if ($datetime === null || $datetime === '') {
-        return '—';
+    $pdo = db();
+
+    if ($pdo === null) {
+        return false;
     }
 
-    $ts = strtotime($datetime);
-    return $ts !== false ? date('d/m/Y H:i', $ts) : $datetime;
+    try {
+        $stmt = $pdo->prepare(
+            'INSERT INTO mensagens_contato (nome, contato, assunto, mensagem)
+             VALUES (:nome, :contato, :assunto, :mensagem)'
+        );
+
+        return $stmt->execute([
+            ':nome'     => $dados['nome'],
+            ':contato'  => $dados['contato'],
+            ':assunto'  => $dados['assunto'],
+            ':mensagem' => $dados['mensagem'],
+        ]);
+    } catch (PDOException $e) {
+        error_log('Erro ao salvar mensagem: ' . $e->getMessage());
+        return false;
+    }
 }
 
-/**
- * Lista todos os orçamentos (mais recentes primeiro), já com os dados do
- * cliente e a lista de itens (produtos) de cada orçamento.
- *
- * @return array<int, array<string, mixed>>
- */
+/* ── Painel: listagens ───────────────────────────── */
 function repo_listar_orcamentos(): array
 {
     $pdo = db();
@@ -251,7 +221,6 @@ function repo_listar_orcamentos(): array
         return [];
     }
 
-    // Busca todos os itens de uma vez e agrupa por orçamento.
     $itens = $pdo->query(
         'SELECT i.id_orcamento, i.quantidade, i.unidade, p.nome AS produto
          FROM itens_orcamento i
@@ -272,11 +241,6 @@ function repo_listar_orcamentos(): array
     return $orcamentos;
 }
 
-/**
- * Lista as mensagens de contato (mais recentes primeiro).
- *
- * @return array<int, array<string, mixed>>
- */
 function repo_listar_mensagens(): array
 {
     $pdo = db();
@@ -292,17 +256,7 @@ function repo_listar_mensagens(): array
     )->fetchAll();
 }
 
-/*
- * ============================================================
- *  CRUD de produtos (painel administrativo)
- * ============================================================
- */
-
-/**
- * Lista as categorias com id e nome (para o select do formulário).
- *
- * @return array<int, array{id_categoria:int, nome:string, slug:string}>
- */
+/* ── Painel: CRUD de produtos ────────────────────── */
 function repo_categorias_lista(): array
 {
     $pdo = db();
@@ -313,11 +267,6 @@ function repo_categorias_lista(): array
     return $pdo->query('SELECT id_categoria, nome, slug FROM categorias ORDER BY nome')->fetchAll();
 }
 
-/**
- * Lista TODOS os produtos (inclusive inativos) com o nome da categoria — para o admin.
- *
- * @return array<int, array<string, mixed>>
- */
 function repo_listar_produtos_admin(): array
 {
     $pdo = db();
@@ -334,11 +283,6 @@ function repo_listar_produtos_admin(): array
     )->fetchAll();
 }
 
-/**
- * Cria um novo produto.
- *
- * @param array<string, mixed> $d
- */
 function repo_criar_produto(array $d): bool
 {
     $pdo = db();
@@ -367,11 +311,6 @@ function repo_criar_produto(array $d): bool
     }
 }
 
-/**
- * Atualiza um produto existente.
- *
- * @param array<string, mixed> $d
- */
 function repo_atualizar_produto(int $id, array $d): bool
 {
     $pdo = db();
@@ -403,12 +342,6 @@ function repo_atualizar_produto(int $id, array $d): bool
     }
 }
 
-/**
- * Exclui um produto. Se ele estiver em algum orçamento (FK), não exclui —
- * orienta a desativar, preservando o histórico.
- *
- * @return array{ok:bool, erro:string|null}
- */
 function repo_excluir_produto(int $id): array
 {
     $pdo = db();
@@ -430,36 +363,5 @@ function repo_excluir_produto(int $id): array
     } catch (PDOException $e) {
         error_log('Erro ao excluir produto: ' . $e->getMessage());
         return ['ok' => false, 'erro' => 'Não foi possível excluir o produto.'];
-    }
-}
-
-/**
- * Salva uma mensagem de contato no banco.
- *
- * @param array{nome:string, contato:string, assunto:string, mensagem:string} $dados
- */
-function repo_salvar_mensagem(array $dados): bool
-{
-    $pdo = db();
-
-    if ($pdo === null) {
-        return false;
-    }
-
-    try {
-        $stmt = $pdo->prepare(
-            'INSERT INTO mensagens_contato (nome, contato, assunto, mensagem)
-             VALUES (:nome, :contato, :assunto, :mensagem)'
-        );
-
-        return $stmt->execute([
-            ':nome'     => $dados['nome'],
-            ':contato'  => $dados['contato'],
-            ':assunto'  => $dados['assunto'],
-            ':mensagem' => $dados['mensagem'],
-        ]);
-    } catch (PDOException $e) {
-        error_log('Erro ao salvar mensagem: ' . $e->getMessage());
-        return false;
     }
 }

@@ -6,7 +6,6 @@ session_start();
 
 require_once __DIR__ . '/../app/config.php';
 
-// Já autenticado? Vai direto para o painel.
 if (!empty($_SESSION['admin'])) {
     header('Location: admin.php');
     exit;
@@ -18,7 +17,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usuario = trim((string) ($_POST['usuario'] ?? ''));
     $senha   = (string) ($_POST['senha'] ?? '');
 
-    // Comparação segura (hash_equals evita ataque de timing).
     $usuarioOk = hash_equals(ADMIN_USER, $usuario);
     $senhaOk   = hash_equals(ADMIN_PASSWORD, $senha);
 
