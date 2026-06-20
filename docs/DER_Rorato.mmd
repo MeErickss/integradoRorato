@@ -1,0 +1,62 @@
+erDiagram
+    CATEGORIAS ||--o{ PRODUTOS : possui
+    CLIENTES ||--o{ ORCAMENTOS : solicita
+    ORCAMENTOS ||--o{ ITENS_ORCAMENTO : contem
+    PRODUTOS ||--o{ ITENS_ORCAMENTO : aparece_em
+    CLIENTES ||--o{ MENSAGENS_CONTATO : envia
+
+    CATEGORIAS {
+        int id_categoria PK
+        varchar nome
+        varchar slug UK
+        varchar descricao
+        varchar icone
+    }
+
+    PRODUTOS {
+        int id_produto PK
+        int id_categoria FK
+        varchar nome
+        text descricao
+        varchar unidade
+        decimal preco_base
+        varchar estoque
+        tinyint destaque
+        tinyint ativo
+    }
+
+    CLIENTES {
+        int id_cliente PK
+        varchar nome
+        varchar telefone
+        varchar email
+        varchar cidade
+        datetime criado_em
+    }
+
+    ORCAMENTOS {
+        int id_orcamento PK
+        int id_cliente FK
+        varchar status
+        text observacoes
+        datetime criado_em
+    }
+
+    ITENS_ORCAMENTO {
+        int id_item PK
+        int id_orcamento FK
+        int id_produto FK
+        decimal quantidade
+        varchar unidade
+        varchar ambiente
+    }
+
+    MENSAGENS_CONTATO {
+        int id_mensagem PK
+        int id_cliente FK
+        varchar nome
+        varchar contato
+        varchar assunto
+        text mensagem
+        datetime enviado_em
+    }

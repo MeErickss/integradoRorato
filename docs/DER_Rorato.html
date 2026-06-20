@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DER — Construções Rorato</title>
+<style>
+    :root{
+        --ink:#0a0f1f; --brand:#1f6feb; --brand2:#1858c9; --accent:#ff7a18;
+        --surface:#fff; --surface2:#f6f8fc; --line:#e7ebf2; --muted:#5b6678; --heading:#0a0f1f;
+        --pk:#1f6feb; --fk:#ff7a18;
+    }
+    *{box-sizing:border-box;}
+    body{
+        margin:0; background:var(--surface2);
+        font-family:'Segoe UI',system-ui,Arial,sans-serif; color:#334155; line-height:1.6;
+    }
+    .wrap{max-width:1180px; margin:0 auto; padding:32px 24px 64px;}
+    header.top{
+        background:radial-gradient(900px 400px at 85% -20%, rgba(31,111,235,.35), transparent 60%), linear-gradient(180deg,#0a0f1f,#0c1426);
+        color:#fff; padding:42px 24px;
+    }
+    header.top .wrap{padding:0; max-width:1180px;}
+    .eyebrow{color:#7fb0ff; font-size:.78rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; margin:0 0 10px;}
+    header.top h1{margin:0; font-size:2.2rem; letter-spacing:-.02em;}
+    header.top p{margin:8px 0 0; color:#aab6cd;}
+    h2.sec{font-size:1.3rem; color:var(--heading); margin:42px 0 18px; display:flex; align-items:center; gap:10px;}
+    h2.sec::before{content:''; width:20px; height:3px; border-radius:2px; background:var(--accent);}
+
+    /* Diagrama Mermaid */
+    .diagram{background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:24px; box-shadow:0 6px 24px rgba(10,15,31,.06); overflow:auto;}
+    .mermaid{display:flex; justify-content:center; min-height:120px;}
+    .fallback{display:none; color:var(--muted); font-size:.9rem; padding:12px; text-align:center;}
+
+    /* Cartões de entidade */
+    .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:18px;}
+    .entity{background:var(--surface); border:1px solid var(--line); border-radius:16px; overflow:hidden; box-shadow:0 4px 18px rgba(10,15,31,.05);}
+    .entity__h{background:linear-gradient(180deg,var(--brand),var(--brand2)); color:#fff; padding:14px 18px; font-weight:800; letter-spacing:.04em; display:flex; align-items:center; gap:8px;}
+    .entity__h small{margin-left:auto; font-weight:600; opacity:.85; font-size:.74rem;}
+    table{width:100%; border-collapse:collapse; font-size:.92rem;}
+    td{padding:9px 18px; border-bottom:1px solid #eef1f7;}
+    tr:last-child td{border-bottom:0;}
+    .col{font-weight:600; color:var(--heading);}
+    .type{color:var(--muted); font-size:.82rem; text-align:right;}
+    .tag{display:inline-block; font-size:.64rem; font-weight:800; letter-spacing:.04em; padding:2px 7px; border-radius:999px; margin-left:7px; vertical-align:middle;}
+    .tag-pk{background:rgba(31,111,235,.14); color:var(--pk);}
+    .tag-fk{background:rgba(255,122,24,.16); color:#d9620a;}
+    .tag-uk{background:rgba(14,163,113,.16); color:#0a7a52;}
+
+    /* Relacionamentos */
+    .rels{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:8px 4px;}
+    .rel{display:flex; align-items:center; gap:14px; padding:12px 18px; border-bottom:1px solid #eef1f7; flex-wrap:wrap;}
+    .rel:last-child{border-bottom:0;}
+    .rel b{color:var(--heading);}
+    .card-rel{font-family:'Courier New',monospace; font-weight:800; color:var(--brand); background:rgba(31,111,235,.10); padding:2px 9px; border-radius:8px; font-size:.85rem;}
+    .nn{background:rgba(255,122,24,.16); color:#d9620a;}
+    .rel span.desc{color:var(--muted); font-size:.88rem;}
+    .legend{margin-top:14px; color:var(--muted); font-size:.84rem;}
+    .legend code{background:#eef1f7; padding:1px 6px; border-radius:6px;}
+    footer{margin-top:48px; color:var(--muted); font-size:.84rem; text-align:center;}
+</style>
+</head>
+<body>
+<header class="top">
+    <div class="wrap">
+        <p class="eyebrow">Modelagem e Banco de Dados</p>
+        <h1>Diagrama Entidade-Relacionamento (DER)</h1>
+        <p>Construções Rorato — banco <code style="color:#cdd9f0">rorato_db</code> · 6 entidades · relacionamento N:N em <b style="color:#fff">itens_orcamento</b></p>
+    </div>
+</header>
+
+<div class="wrap">
+
+    <h2 class="sec">Diagrama</h2>
+    <div class="diagram">
+        <pre class="mermaid">
+erDiagram
+    CATEGORIAS ||--o{ PRODUTOS : "possui"
+    CLIENTES ||--o{ ORCAMENTOS : "solicita"
+    ORCAMENTOS ||--o{ ITENS_ORCAMENTO : "contém"
+    PRODUTOS ||--o{ ITENS_ORCAMENTO : "aparece em"
+    CLIENTES ||--o{ MENSAGENS_CONTATO : "envia"
+
+    CATEGORIAS {
+        int id_categoria PK
+        varchar nome
+        varchar slug UK
+        varchar descricao
+        varchar icone
+    }
+    PRODUTOS {
+        int id_produto PK
+        int id_categoria FK
+        varchar nome
+        text descricao
+        varchar unidade
+        decimal preco_base
+        varchar estoque
+        tinyint destaque
+        tinyint ativo
+    }
+    CLIENTES {
+        int id_cliente PK
+        varchar nome
+        varchar telefone
+        varchar email
+        varchar cidade
+        datetime criado_em
+    }
+    ORCAMENTOS {
+        int id_orcamento PK
+        int id_cliente FK
+        varchar status
+        text observacoes
+        datetime criado_em
+    }
+    ITENS_ORCAMENTO {
+        int id_item PK
+        int id_orcamento FK
+        int id_produto FK
+        decimal quantidade
+        varchar unidade
+        varchar ambiente
+    }
+    MENSAGENS_CONTATO {
+        int id_mensagem PK
+        int id_cliente FK
+        varchar nome
+        varchar contato
+        varchar assunto
+        text mensagem
+        datetime enviado_em
+    }
+        </pre>
+        <p class="fallback" id="fallback">Sem internet para renderizar o diagrama interativo — use a estrutura detalhada abaixo. 👇</p>
+    </div>
+
+    <h2 class="sec">Relacionamentos</h2>
+    <div class="rels">
+        <div class="rel"><span class="card-rel">1 : N</span> <b>CATEGORIAS</b> → <b>PRODUTOS</b> <span class="desc">uma categoria possui vários produtos</span></div>
+        <div class="rel"><span class="card-rel">1 : N</span> <b>CLIENTES</b> → <b>ORCAMENTOS</b> <span class="desc">um cliente solicita vários orçamentos</span></div>
+        <div class="rel"><span class="card-rel">1 : N</span> <b>CLIENTES</b> → <b>MENSAGENS_CONTATO</b> <span class="desc">um cliente envia várias mensagens</span></div>
+        <div class="rel"><span class="card-rel nn">N : N</span> <b>ORCAMENTOS</b> ⇄ <b>PRODUTOS</b> <span class="desc">resolvido pela tabela associativa <b>ITENS_ORCAMENTO</b> (um orçamento tem vários produtos; um produto aparece em vários orçamentos)</span></div>
+        <p class="legend">Legenda: <span class="tag tag-pk">PK</span> chave primária · <span class="tag tag-fk">FK</span> chave estrangeira · <span class="tag tag-uk">UK</span> chave única.</p>
+    </div>
+
+    <h2 class="sec">Estrutura das tabelas</h2>
+    <div class="grid">
+
+        <div class="entity">
+            <div class="entity__h">categorias <small>1 PK</small></div>
+            <table>
+                <tr><td class="col">id_categoria <span class="tag tag-pk">PK</span></td><td class="type">INT AUTO_INCREMENT</td></tr>
+                <tr><td class="col">nome</td><td class="type">VARCHAR(80)</td></tr>
+                <tr><td class="col">slug <span class="tag tag-uk">UK</span></td><td class="type">VARCHAR(80)</td></tr>
+                <tr><td class="col">descricao</td><td class="type">VARCHAR(255)</td></tr>
+                <tr><td class="col">icone</td><td class="type">VARCHAR(40)</td></tr>
+            </table>
+        </div>
+
+        <div class="entity">
+            <div class="entity__h">produtos <small>1 PK · 1 FK</small></div>
+            <table>
+                <tr><td class="col">id_produto <span class="tag tag-pk">PK</span></td><td class="type">INT AUTO_INCREMENT</td></tr>
+                <tr><td class="col">id_categoria <span class="tag tag-fk">FK</span></td><td class="type">INT → categorias</td></tr>
+                <tr><td class="col">nome</td><td class="type">VARCHAR(120)</td></tr>
+                <tr><td class="col">descricao</td><td class="type">TEXT</td></tr>
+                <tr><td class="col">unidade</td><td class="type">VARCHAR(30)</td></tr>
+                <tr><td class="col">preco_base</td><td class="type">DECIMAL(10,2)</td></tr>
+                <tr><td class="col">estoque</td><td class="type">VARCHAR(40)</td></tr>
+                <tr><td class="col">destaque</td><td class="type">TINYINT(1)</td></tr>
+                <tr><td class="col">ativo</td><td class="type">TINYINT(1)</td></tr>
+            </table>
+        </div>
+
+        <div class="entity">
+            <div class="entity__h">clientes <small>1 PK</small></div>
+            <table>
+                <tr><td class="col">id_cliente <span class="tag tag-pk">PK</span></td><td class="type">INT AUTO_INCREMENT</td></tr>
+                <tr><td class="col">nome</td><td class="type">VARCHAR(120)</td></tr>
+                <tr><td class="col">telefone</td><td class="type">VARCHAR(30)</td></tr>
+                <tr><td class="col">email</td><td class="type">VARCHAR(120)</td></tr>
+                <tr><td class="col">cidade</td><td class="type">VARCHAR(80)</td></tr>
+                <tr><td class="col">criado_em</td><td class="type">DATETIME</td></tr>
+            </table>
+        </div>
+
+        <div class="entity">
+            <div class="entity__h">orcamentos <small>1 PK · 1 FK</small></div>
+            <table>
+                <tr><td class="col">id_orcamento <span class="tag tag-pk">PK</span></td><td class="type">INT AUTO_INCREMENT</td></tr>
+                <tr><td class="col">id_cliente <span class="tag tag-fk">FK</span></td><td class="type">INT → clientes</td></tr>
+                <tr><td class="col">status</td><td class="type">VARCHAR(30)</td></tr>
+                <tr><td class="col">observacoes</td><td class="type">TEXT</td></tr>
+                <tr><td class="col">criado_em</td><td class="type">DATETIME</td></tr>
+            </table>
+        </div>
+
+        <div class="entity">
+            <div class="entity__h">itens_orcamento <small>1 PK · 2 FK · N:N</small></div>
+            <table>
+                <tr><td class="col">id_item <span class="tag tag-pk">PK</span></td><td class="type">INT AUTO_INCREMENT</td></tr>
+                <tr><td class="col">id_orcamento <span class="tag tag-fk">FK</span></td><td class="type">INT → orcamentos</td></tr>
+                <tr><td class="col">id_produto <span class="tag tag-fk">FK</span></td><td class="type">INT → produtos</td></tr>
+                <tr><td class="col">quantidade</td><td class="type">DECIMAL(10,2)</td></tr>
+                <tr><td class="col">unidade</td><td class="type">VARCHAR(30)</td></tr>
+                <tr><td class="col">ambiente</td><td class="type">VARCHAR(80)</td></tr>
+            </table>
+        </div>
+
+        <div class="entity">
+            <div class="entity__h">mensagens_contato <small>1 PK · 1 FK</small></div>
+            <table>
+                <tr><td class="col">id_mensagem <span class="tag tag-pk">PK</span></td><td class="type">INT AUTO_INCREMENT</td></tr>
+                <tr><td class="col">id_cliente <span class="tag tag-fk">FK</span></td><td class="type">INT → clientes (nulo)</td></tr>
+                <tr><td class="col">nome</td><td class="type">VARCHAR(120)</td></tr>
+                <tr><td class="col">contato</td><td class="type">VARCHAR(120)</td></tr>
+                <tr><td class="col">assunto</td><td class="type">VARCHAR(120)</td></tr>
+                <tr><td class="col">mensagem</td><td class="type">TEXT</td></tr>
+                <tr><td class="col">enviado_em</td><td class="type">DATETIME</td></tr>
+            </table>
+        </div>
+
+    </div>
+
+    <footer>Construções Rorato — projeto acadêmico em PHP · banco <code>rorato_db</code> (MySQL / utf8mb4)</footer>
+</div>
+
+<script type="module">
+    try {
+        const mermaid = (await import('https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs')).default;
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#eaf2ff',
+                primaryBorderColor: '#1f6feb',
+                primaryTextColor: '#0a0f1f',
+                lineColor: '#ff7a18',
+                fontFamily: 'Segoe UI, system-ui, Arial, sans-serif'
+            }
+        });
+        await mermaid.run();
+    } catch (e) {
+        document.getElementById('fallback').style.display = 'block';
+        document.querySelector('.mermaid').style.display = 'none';
+    }
+</script>
+</body>
+</html>
